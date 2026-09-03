@@ -66,16 +66,16 @@
 
       <p id="fehler" class="error" role="alert" hidden></p>
 
-      <button type="submit" class="btn">
+      <button type="submit" class="btn" id="submit-btn">
         <span class="btn__cog" aria-hidden="true">
           <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
         </span>
-        Termin an die Werkstatt schicken
+        <span id="btn-text">Termin an die Werkstatt schicken</span>
       </button>
 
       <p class="hint">
-        &#9881;&#65039; Klick &ouml;ffnet dein Mailprogramm mit einer fertig geschraubten Nachricht an
-        <strong>tinker-tech-support@proton.me</strong>.
+        &#9881;&#65039; Der Terminwunsch wird direkt an
+        <strong>j.lampas@protonmail.com</strong> gemailt &ndash; kein eigenes Mailprogramm n&ouml;tig.
       </p>
     </form>
 
@@ -93,7 +93,9 @@
 
   <script>
     (function () {
-      var EMPFAENGER = "tinker-tech-support@proton.me";
+      // ---- URL deines Cloudflare Workers (nach dem Deploy eintragen) ----
+      var WORKER_URL = "https://tinker-tech-support-mailer.josua-lampas.workers.dev";
+
       var form = document.getElementById("termin-form");
       var nameInput = document.getElementById("name");
       var datumInput = document.getElementById("datum");
@@ -101,6 +103,8 @@
       var erfolg = document.getElementById("erfolg");
       var erfolgText = document.getElementById("erfolg-text");
       var nochmal = document.getElementById("nochmal");
+      var submitBtn = document.getElementById("submit-btn");
+      var btnText = document.getElementById("btn-text");
 
       // Minimaldatum = morgen
       var morgen = new Date();
@@ -159,28 +163,46 @@
 
         var lesbar = formatiereDatum(datum);
 
-        var betreff = "Tinker Tech Support – Terminwunsch von " + name;
-        var koerper =
-          "Hallo Tinker Tech Support Team,\n\n" +
-          "ich möchte einen Termin in der Werkstatt vereinbaren.\n\n" +
-          "Name: " + name + "\n" +
-          "Wunschdatum: " + lesbar + " (" + datum + ")\n\n" +
-          "Viele Grüße\n" +
-          name;
+        setLaedt(true);
 
-        var mailto =
-          "mailto:" + EMPFAENGER +
-          "?subject=" + encodeURIComponent(betreff) +
-          "&body=" + encodeURIComponent(koerper);
-
-        window.location.href = mailto;
-
-        erfolgText.textContent =
-          name + ", dein Terminwunsch für " + lesbar +
-          " wurde deinem Mailprogramm übergeben. Bitte dort auf „Senden“ drücken.";
-        form.hidden = true;
-        erfolg.hidden = false;
+        fetch(WORKER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name, date: datum })
+        })
+          .then(function (res) {
+            return res.json().catch(function () { return {}; }).then(function (body) {
+              return { ok: res.ok, body: body };
+            });
+          })
+          .then(function (result) {
+            if (!result.ok) {
+              throw new Error(
+                (result.body && result.body.error) ||
+                  "Der Werkstatt-Server hat die Nachricht abgelehnt."
+              );
+            }
+            erfolgText.textContent =
+              name + ", dein Terminwunsch für " + lesbar +
+              " ist bei der Werkstatt eingegangen. Wir melden uns!";
+            form.hidden = true;
+            erfolg.hidden = false;
+          })
+          .catch(function (err) {
+            zeigeFehler(
+              (err && err.message ? err.message : "Verbindung zur Werkstatt fehlgeschlagen.") +
+              " Bitte später nochmal versuchen."
+            );
+          })
+          .then(function () {
+            setLaedt(false);
+          });
       });
+
+      function setLaedt(an) {
+        submitBtn.disabled = an;
+        btnText.textContent = an ? "Zahnräder drehen sich …" : "Termin an die Werkstatt schicken";
+      }
 
       nochmal.addEventListener("click", function () {
         form.reset();

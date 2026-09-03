@@ -256,6 +256,15 @@ body {
   transform: translateY(1px);
 }
 
+.btn:disabled {
+  cursor: progress;
+  filter: saturate(0.6) brightness(0.85);
+}
+
+.btn:disabled .btn__cog {
+  animation: spin 1s linear infinite;
+}
+
 .btn__cog {
   width: 18px;
   height: 18px;
