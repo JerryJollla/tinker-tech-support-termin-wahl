@@ -1,1 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Telekom Tinker Tech Support</title>
+  <link rel="stylesheet" href="web.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Rubik+Mono+One&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- decorative tinker gears -->
+  <div class="gear gear--one" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+  </div>
+  <div class="gear gear--two" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+  </div>
+  <div class="gear gear--three" aria-hidden="true">
+    <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+  </div>
 
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <g id="gear-shape">
+        <path fill="currentColor" d="M50 12l4.6 1.2 3.1 8.6a29 29 0 0 1 7.7 4.5l8.8-2.4 3.4 3.4-2.4 8.8a29 29 0 0 1 4.5 7.7l8.6 3.1L96 50l-1.2 4.6-8.6 3.1a29 29 0 0 1-4.5 7.7l2.4 8.8-3.4 3.4-8.8-2.4a29 29 0 0 1-7.7 4.5l-3.1 8.6L50 96l-4.6-1.2-3.1-8.6a29 29 0 0 1-7.7-4.5l-8.8 2.4-3.4-3.4 2.4-8.8a29 29 0 0 1-4.5-7.7l-8.6-3.1L12 50l1.2-4.6 8.6-3.1a29 29 0 0 1 4.5-7.7l-2.4-8.8 3.4-3.4 8.8 2.4a29 29 0 0 1 7.7-4.5l3.1-8.6L50 12zm0 22a16 16 0 1 0 0 32 16 16 0 0 0 0-32z" />
+      </g>
+    </defs>
+  </svg>
+
+  <main class="card">
+    <header class="card__head">
+      <div class="badge">
+        <span class="badge__dot"></span>
+        Werkstatt geöffnet
+      </div>
+      <h1 class="title">
+        <span class="title__telekom">Telekom</span>
+        <span class="title__tinker">Tinker</span>
+        <span class="title__rest">Tech&nbsp;Support</span>
+      </h1>
+      <p class="tagline">
+        &#128295; Schrauber-Sprechstunde &middot; Zahnr&auml;der gefettet &middot; Termin ausget&uuml;ftelt
+      </p>
+    </header>
+
+    <form id="termin-form" class="form" novalidate>
+      <label class="field">
+        <span class="field__label">Dein Name</span>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          class="field__input"
+          placeholder="z.&nbsp;B. Ada Tinkerbell"
+          autocomplete="name"
+          required
+        />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Wunschtermin (in der Zukunft)</span>
+        <input type="date" id="datum" name="datum" class="field__input" required />
+      </label>
+
+      <p id="fehler" class="error" role="alert" hidden></p>
+
+      <button type="submit" class="btn">
+        <span class="btn__cog" aria-hidden="true">
+          <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+        </span>
+        Termin an die Werkstatt schicken
+      </button>
+
+      <p class="hint">
+        &#9881;&#65039; Klick &ouml;ffnet dein Mailprogramm mit einer fertig geschraubten Nachricht an
+        <strong>tinker-tech-support@proton.me</strong>.
+      </p>
+    </form>
+
+    <div id="erfolg" class="success" hidden>
+      <div class="success__bot" aria-hidden="true">&#129302;</div>
+      <h2>Nachricht auf die Hebeb&uuml;hne gelegt!</h2>
+      <p id="erfolg-text"></p>
+      <button type="button" id="nochmal" class="btn btn--ghost">Noch einen Termin tinkern</button>
+    </div>
+  </main>
+
+  <footer class="page-foot">
+    Kein Server, nur Zahnr&auml;der &mdash; alles l&auml;uft in deinem Browser. &#128736;&#65039;
+  </footer>
+
+  <script>
+    (function () {
+      var EMPFAENGER = "tinker-tech-support@proton.me";
+      var form = document.getElementById("termin-form");
+      var nameInput = document.getElementById("name");
+      var datumInput = document.getElementById("datum");
+      var fehler = document.getElementById("fehler");
+      var erfolg = document.getElementById("erfolg");
+      var erfolgText = document.getElementById("erfolg-text");
+      var nochmal = document.getElementById("nochmal");
+
+      // Minimaldatum = morgen
+      var morgen = new Date();
+      morgen.setDate(morgen.getDate() + 1);
+      var minStr = morgen.toISOString().split("T")[0];
+      datumInput.min = minStr;
+
+      function zeigeFehler(text) {
+        fehler.textContent = text;
+        fehler.hidden = false;
+      }
+
+      function versteckeFehler() {
+        fehler.hidden = true;
+      }
+
+      function formatiereDatum(iso) {
+        var teile = iso.split("-");
+        var d = new Date(Number(teile[0]), Number(teile[1]) - 1, Number(teile[2]));
+        return d.toLocaleDateString("de-DE", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        });
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        versteckeFehler();
+
+        var name = nameInput.value.trim();
+        var datum = datumInput.value;
+
+        if (!name) {
+          zeigeFehler("Bitte trag deinen Namen ein, sonst weiß der Roboter nicht, wen er anrufen soll.");
+          nameInput.focus();
+          return;
+        }
+
+        if (!datum) {
+          zeigeFehler("Bitte wähle ein Datum für deinen Termin.");
+          datumInput.focus();
+          return;
+        }
+
+        var gewaehlt = new Date(datum + "T00:00:00");
+        var heute = new Date();
+        heute.setHours(0, 0, 0, 0);
+
+        if (gewaehlt <= heute) {
+          zeigeFehler("Der Termin muss in der Zukunft liegen – Zeitmaschine ist noch in Reparatur.");
+          datumInput.focus();
+          return;
+        }
+
+        var lesbar = formatiereDatum(datum);
+
+        var betreff = "Tinker Tech Support – Terminwunsch von " + name;
+        var koerper =
+          "Hallo Tinker Tech Support Team,\n\n" +
+          "ich möchte einen Termin in der Werkstatt vereinbaren.\n\n" +
+          "Name: " + name + "\n" +
+          "Wunschdatum: " + lesbar + " (" + datum + ")\n\n" +
+          "Viele Grüße\n" +
+          name;
+
+        var mailto =
+          "mailto:" + EMPFAENGER +
+          "?subject=" + encodeURIComponent(betreff) +
+          "&body=" + encodeURIComponent(koerper);
+
+        window.location.href = mailto;
+
+        erfolgText.textContent =
+          name + ", dein Terminwunsch für " + lesbar +
+          " wurde deinem Mailprogramm übergeben. Bitte dort auf „Senden“ drücken.";
+        form.hidden = true;
+        erfolg.hidden = false;
+      });
+
+      nochmal.addEventListener("click", function () {
+        form.reset();
+        datumInput.min = minStr;
+        erfolg.hidden = true;
+        form.hidden = false;
+        nameInput.focus();
+      });
+    })();
+  </script>
+</body>
+</html>
