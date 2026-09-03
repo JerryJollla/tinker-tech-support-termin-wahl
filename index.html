@@ -10,24 +10,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Rubik+Mono+One&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <!-- decorative tinker gears -->
-  <div class="gear gear--one" aria-hidden="true">
-    <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+  <!-- decorative spinning tinker discs -->
+  <div class="spinner spinner--one" aria-hidden="true">
+    <img src="img/OIP-2716065024.jpg" alt="" />
   </div>
-  <div class="gear gear--two" aria-hidden="true">
-    <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+  <div class="spinner spinner--two" aria-hidden="true">
+    <img src="img/OIP-1056120868.jpg" alt="" />
   </div>
-  <div class="gear gear--three" aria-hidden="true">
-    <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+  <div class="spinner spinner--three" aria-hidden="true">
+    <img src="img/OIP-194925064.jpg" alt="" />
   </div>
-
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <g id="gear-shape">
-        <path fill="currentColor" d="M50 12l4.6 1.2 3.1 8.6a29 29 0 0 1 7.7 4.5l8.8-2.4 3.4 3.4-2.4 8.8a29 29 0 0 1 4.5 7.7l8.6 3.1L96 50l-1.2 4.6-8.6 3.1a29 29 0 0 1-4.5 7.7l2.4 8.8-3.4 3.4-8.8-2.4a29 29 0 0 1-7.7 4.5l-3.1 8.6L50 96l-4.6-1.2-3.1-8.6a29 29 0 0 1-7.7-4.5l-8.8 2.4-3.4-3.4 2.4-8.8a29 29 0 0 1-4.5-7.7l-8.6-3.1L12 50l1.2-4.6 8.6-3.1a29 29 0 0 1 4.5-7.7l-2.4-8.8 3.4-3.4 8.8 2.4a29 29 0 0 1 7.7-4.5l3.1-8.6L50 12zm0 22a16 16 0 1 0 0 32 16 16 0 0 0 0-32z" />
-      </g>
-    </defs>
-  </svg>
 
   <main class="card">
     <figure class="hero">
@@ -76,13 +68,13 @@
 
       <button type="submit" class="btn" id="submit-btn">
         <span class="btn__cog" aria-hidden="true">
-          <svg viewBox="0 0 100 100"><use href="#gear-shape" /></svg>
+          <img src="img/OIP-1382626524.jpg" alt="" />
         </span>
         <span id="btn-text">Termin an den Stall schicken</span>
       </button>
 
       <p class="hint">
-        &#9881;&#65039; Der Terminwunsch wird direkt via E-Mail versendet.
+        &#128231; Der Terminwunsch wird direkt via E-Mail versendet.
       </p>
     </form>
 
@@ -115,7 +107,7 @@
   </section>
 
   <footer class="page-foot">
-    Kein Server, nur Zahnr&auml;der &mdash; alles l&auml;uft in deinem Browser. &#128736;&#65039;
+    Kein Server, nur Pferdest&auml;rken &mdash; alles l&auml;uft in deinem Browser. &#128014;
   </footer>
 
   <div id="erfolg-modal" class="modal" hidden>
@@ -250,7 +242,7 @@
 
       function setLaedt(an) {
         submitBtn.disabled = an;
-        btnText.textContent = an ? "Zahnräder drehen sich …" : "Termin an den Stall schicken";
+        btnText.textContent = an ? "Tinker galoppieren los …" : "Termin an den Stall schicken";
       }
 
       function oeffneModal() {
