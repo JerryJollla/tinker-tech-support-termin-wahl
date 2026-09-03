@@ -227,12 +227,12 @@
             if (!result.ok) {
               throw new Error(
                 (result.body && result.body.error) ||
-                  "Der Werkstatt-Server hat die Nachricht abgelehnt."
+                  "Der Server hat die Nachricht abgelehnt."
               );
             }
             var meldung =
               name + ", dein Terminwunsch für " + lesbar +
-              " ist bei der Werkstatt eingegangen. Wir melden uns!";
+              " ist im Stall eingegangen. Wir melden uns!";
             erfolgText.textContent = meldung;
             modalText.textContent = meldung;
             form.hidden = true;
@@ -241,7 +241,7 @@
           })
           .catch(function (err) {
             zeigeFehler(
-              (err && err.message ? err.message : "Verbindung zur Werkstatt fehlgeschlagen.") +
+              (err && err.message ? err.message : "Verbindung zum Stall fehlgeschlagen.") +
               " Bitte später nochmal versuchen."
             );
           })
@@ -252,7 +252,7 @@
 
       function setLaedt(an) {
         submitBtn.disabled = an;
-        btnText.textContent = an ? "Zahnräder drehen sich …" : "Termin an die Werkstatt schicken";
+        btnText.textContent = an ? "Zahnräder drehen sich …" : "Termin an den Stall schicken";
       }
 
       function oeffneModal() {
