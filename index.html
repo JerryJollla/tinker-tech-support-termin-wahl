@@ -30,6 +30,14 @@
   </svg>
 
   <main class="card">
+    <figure class="hero">
+      <img
+        src="img/OIP-1699899566.jpg"
+        alt="Tinker-Pferd mit voller heller Mähne und Behang im Abendlicht"
+        loading="eager"
+      />
+    </figure>
+
     <header class="card__head">
       <div class="badge">
         <span class="badge__dot"></span>
@@ -41,7 +49,7 @@
         <span class="title__rest">Tech&nbsp;Support</span>
       </h1>
       <p class="tagline">
-        &#128295; Schrauber-Sprechstunde &middot; Zahnr&auml;der gefettet &middot; Termin ausget&uuml;ftelt
+        &#128246; Netzwerk-Sprechstunde &middot; Bandbreite auf Trab gebracht &middot; Termin gesattelt
       </p>
     </header>
 
@@ -79,16 +87,55 @@
     </form>
 
     <div id="erfolg" class="success" hidden>
-      <div class="success__bot" aria-hidden="true">&#129302;</div>
+      <div class="success__horse" aria-hidden="true">&#128014;</div>
       <h2>Nachricht auf die Hebeb&uuml;hne gelegt!</h2>
       <p id="erfolg-text"></p>
       <button type="button" id="nochmal" class="btn btn--ghost">Noch einen Termin tinkern</button>
     </div>
   </main>
 
+  <section class="gallery" aria-label="Tinker-Galerie">
+    <h2 class="gallery__title">&#128014; Unsere Tinker</h2>
+    <div class="gallery__grid">
+      <figure>
+        <img src="img/OIP-1056120868.jpg" alt="Tinker-Stute mit Fohlen auf einer Blumenwiese" loading="lazy" />
+        <figcaption>Stute mit Fohlen</figcaption>
+      </figure>
+      <figure>
+        <img src="img/OIP-1382626524.jpg" alt="Tinker-Pferd im gestreckten Galopp &uuml;ber eine Wiese" loading="lazy" />
+        <figcaption>Voller Galopp</figcaption>
+      </figure>
+      <figure>
+        <img src="img/OIP-194925064.jpg" alt="Schwarz-wei&szlig;er Tinker im schwungvollen Trab" loading="lazy" />
+        <figcaption>Schwungvoller Trab</figcaption>
+      </figure>
+      <figure>
+        <img src="img/OIP-2716065024.jpg" alt="Tinker-Pferd steht ruhig vor einem Gartenbeet" loading="lazy" />
+        <figcaption>Barocke Ruhe</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <footer class="page-foot">
     Kein Server, nur Zahnr&auml;der &mdash; alles l&auml;uft in deinem Browser. &#128736;&#65039;
   </footer>
+
+  <div id="erfolg-modal" class="modal" hidden>
+    <div class="modal__backdrop" data-close></div>
+    <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button type="button" class="modal__x" data-close aria-label="Schlie&szlig;en">&times;</button>
+      <img
+        class="modal__img"
+        src="img/erfolg.jpg"
+        alt="Tinker-Pferd mit Partyhut, Konfetti und &bdquo;Happy Tinker&ldquo;-Girlande"
+      />
+      <div class="modal__body">
+        <h2 id="modal-title">Termin steht! &#127881;</h2>
+        <p id="modal-text"></p>
+        <button type="button" class="btn" data-close>Wieherlich &ndash; danke!</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     (function () {
@@ -104,6 +151,8 @@
       var nochmal = document.getElementById("nochmal");
       var submitBtn = document.getElementById("submit-btn");
       var btnText = document.getElementById("btn-text");
+      var modal = document.getElementById("erfolg-modal");
+      var modalText = document.getElementById("modal-text");
 
       // Minimaldatum = morgen
       var morgen = new Date();
@@ -139,7 +188,7 @@
         var datum = datumInput.value;
 
         if (!name) {
-          zeigeFehler("Bitte trag deinen Namen ein, sonst weiß der Roboter nicht, wen er anrufen soll.");
+          zeigeFehler("Bitte trag deinen Namen ein, sonst weiß der Stallmeister nicht, wen er satteln soll.");
           nameInput.focus();
           return;
         }
@@ -181,11 +230,14 @@
                   "Der Werkstatt-Server hat die Nachricht abgelehnt."
               );
             }
-            erfolgText.textContent =
+            var meldung =
               name + ", dein Terminwunsch für " + lesbar +
               " ist bei der Werkstatt eingegangen. Wir melden uns!";
+            erfolgText.textContent = meldung;
+            modalText.textContent = meldung;
             form.hidden = true;
             erfolg.hidden = false;
+            oeffneModal();
           })
           .catch(function (err) {
             zeigeFehler(
@@ -202,6 +254,26 @@
         submitBtn.disabled = an;
         btnText.textContent = an ? "Zahnräder drehen sich …" : "Termin an die Werkstatt schicken";
       }
+
+      function oeffneModal() {
+        modal.hidden = false;
+        document.body.style.overflow = "hidden";
+        var okBtn = modal.querySelector(".modal__body .btn");
+        if (okBtn) okBtn.focus();
+      }
+
+      function schliesseModal() {
+        modal.hidden = true;
+        document.body.style.overflow = "";
+      }
+
+      modal.addEventListener("click", function (e) {
+        if (e.target.hasAttribute("data-close")) schliesseModal();
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !modal.hidden) schliesseModal();
+      });
 
       nochmal.addEventListener("click", function () {
         form.reset();
